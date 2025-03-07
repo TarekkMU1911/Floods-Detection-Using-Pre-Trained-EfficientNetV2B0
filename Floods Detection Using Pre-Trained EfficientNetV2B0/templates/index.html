@@ -5,15 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flood Detection</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"></script>
     <style>
         body {
             font-family: 'Poppins', sans-serif;
             text-align: center;
-            background: linear-gradient(-45deg, #1A1125, #3D1F5D, #5A3FA0, #2D0F40);
+            background: linear-gradient(-45deg, #00081F, #001A40, #002F6C, #001233);
             background-size: 400% 400%;
             margin: 0;
             padding: 0;
-            color: #D1C4E9;
+            color: #AEB9D1;
             animation: gradientBG 10s ease infinite;
         }
 
@@ -35,11 +36,10 @@
             width: 60%;
             margin: 50px auto;
             padding: 30px;
-            background: rgba(44, 26, 66, 0.95);
-            box-shadow: 0 0 25px rgba(209, 196, 233, 0.4);
+            background: rgba(0, 10, 30, 0.95);
+            box-shadow: 0 0 25px rgba(100, 150, 255, 0.4);
             border-radius: 15px;
             animation: fadeIn 1.5s ease-in-out;
-            transform: translateY(-20px);
         }
 
         @keyframes fadeIn {
@@ -55,57 +55,72 @@
         }
 
         h1 {
-            color: #EDE7F6;
+            color: #DDE8FF;
             font-size: 34px;
-            text-shadow: 0 0 20px #9575CD;
-            animation: flicker 1.5s infinite alternate;
+            text-shadow: 0 0 20px #4A6CD1;
+            animation: glow 1.5s infinite alternate;
         }
 
-        @keyframes flicker {
-            from {
-                text-shadow: 0 0 20px #9575CD, 0 0 30px #673AB7;
+        @keyframes glow {
+            0% {
+                text-shadow: 0 0 20px #4A6CD1;
             }
 
-            to {
-                text-shadow: 0 0 25px #D1C4E9, 0 0 35px #7E57C2;
+            100% {
+                text-shadow: 0 0 30px #4A6CD1;
             }
         }
 
-        input[type="file"] {
-            background-color: #673AB7;
-            color: #E0E0FF;
-            border: none;
-            padding: 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: 0.3s;
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            margin-top: 20px;
         }
 
-            input[type="file"]:hover {
-                background-color: #512DA8;
-                transform: scale(1.05);
-            }
-
-        button {
+        button, input[type="file"] {
             padding: 12px 24px;
-            background: linear-gradient(135deg, #9575CD, #673AB7);
+            background: linear-gradient(135deg, #264D9C, #133D7A);
             color: white;
             border: none;
             border-radius: 6px;
             cursor: pointer;
-            transition: all 0.3s;
             font-weight: bold;
-            margin-top: 10px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-            button:hover {
-                background: linear-gradient(135deg, #7E57C2, #512DA8);
-                transform: translateY(-2px);
-                box-shadow: 0 5px 15px rgba(209, 196, 233, 0.5);
+            button:hover, input[type="file"]:hover {
+                background: linear-gradient(135deg, #1A3970, #0C2A55);
+                transform: scale(1.05);
+                box-shadow: 0 5px 15px rgba(100, 150, 255, 0.5);
             }
+
+        .download-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px auto;
+            text-decoration: none;
+        }
+
+            .download-btn button {
+                background: linear-gradient(135deg, #008C76, #005F56);
+                transition: transform 0.3s;
+            }
+
+                .download-btn button:hover {
+                    transform: scale(1.08);
+                    box-shadow: 0 0 20px rgba(0, 255, 150, 0.5);
+                }
 
         .image-container {
             margin-top: 20px;
+            animation: fadeIn 2s ease-in-out;
         }
 
         img {
@@ -114,87 +129,62 @@
             margin-top: 10px;
             border-radius: 12px;
             box-shadow: 0 0 20px rgba(255, 255, 255, 0.3);
-            transition: 0.3s;
-            animation: zoomIn 1s ease-in-out;
+            transition: transform 0.3s;
         }
 
-        @keyframes zoomIn {
-            from {
-                opacity: 0;
-                transform: scale(0.9);
+            img:hover {
+                transform: scale(1.08);
+                box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
             }
-
-            to {
-                opacity: 1;
-                transform: scale(1);
-            }
-        }
-
-        img:hover {
-            transform: scale(1.08);
-            box-shadow: 0 0 25px rgba(255, 255, 255, 0.5);
-        }
-
-        .error {
-            color: #FF8A80;
-            font-weight: bold;
-            margin-top: 10px;
-        }
-
-        #loading-message-main {
-            display: none;
-            color: #E0E0FF;
-            font-size: 18px;
-            font-weight: bold;
-            animation: blink 1.5s infinite alternate;
-            margin-top: 15px;
-        }
-
-        @keyframes blink {
-            from {
-                opacity: 0.5;
-            }
-
-            to {
-                opacity: 1;
-            }
-        }
     </style>
 </head>
 <body>
     <div class="container">
-        <h1>Flood Detection Using EfficientNetV2B0 </h1>
-        <form action="/predict" method="post" enctype="multipart/form-data">
-            <input type="file" name="file" accept="image/*" required>
-            <br>
-            <button type="submit">Predict</button>
+        <h1><i class="fas fa-water"></i> Flood Detection Using EfficientNetV2B0</h1>
+        <form action="/predict" method="post" enctype="multipart/form-data" id="upload-form">
+            <div class="form-group">
+                <input type="file" name="file" accept="image/*" required id="file-input">
+                <button type="submit"> <i class="fas fa-upload"></i> Predict</button>
+            </div>
         </form>
-        <p id="loading-message-main">The Prediction takes from 7 to 20 seconds to be processed, Please Wait</p>
-        <p id="loading-message" style="display:none; color:#E0E0FF;">Processing image...</p>
+        <p id="loading-message-main" style="display:none;">The Prediction takes from 7 to 20 seconds to be processed, Please Wait...</p>
         {% if error %}
         <p class="error">{{ error }}</p>
         {% endif %}
         <div class="image-container">
             {% if input_image %}
             <h2>Satellite Image (RGB View):</h2>
-            <img src="{{ url_for('static', filename='images/visualization.png') }}" alt="RGB Image">
+            <img id="rgb-image" src="" alt="RGB Image" style="display:none;">
             {% endif %}
             {% if mask_image %}
             <h2>Predicted Flood Areas:</h2>
             <img src="{{ url_for('static', filename='images/' + mask_image) }}" alt="Predicted Mask">
             <br>
-            <a href="{{ url_for('static', filename='images/' + mask_image) }}" download>
-                <button>Download Prediction Image</button>
-            </a>
+            <div class="download-btn">
+                <a href="{{ url_for('static', filename='images/' + mask_image) }}" download>
+                    <button class="download-btn"> <i class="fas fa-download"></i> Download Prediction Image</button>
+                </a>
+            </div>
             {% endif %}
         </div>
-        <p id="thank-you" style="display:none; color:#E0E0FF;">Thank you for using our AI-based Flood Detection!</p>
     </div>
 
     <script>
         document.querySelector("form").addEventListener("submit", function () {
             document.getElementById("loading-message-main").style.display = "block";
-            document.getElementById("loading-message").style.display = "block";
+        });
+
+        document.getElementById("file-input").addEventListener("change", function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.getElementById("rgb-image");
+                    img.src = e.target.result;
+                    img.style.display = "block";
+                }
+                reader.readAsDataURL(file);
+            }
         });
     </script>
 </body>
